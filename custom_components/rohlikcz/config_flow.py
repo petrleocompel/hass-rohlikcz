@@ -1,6 +1,6 @@
 
 from config.custom_components.rohlik.const import DOMAIN
-from custom_components.rohlik.sensor import RohlikApi
+from custom_components.rohlikcz.sensor import RohlikApi
 from homeassistant.const import CONF_AUTHENTICATION, CONF_PASSWORD, CONF_USERNAME
 from homeassistant import config_entries, core
 import homeassistant.helpers.config_validation as cv

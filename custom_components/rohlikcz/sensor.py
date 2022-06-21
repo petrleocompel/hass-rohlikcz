@@ -5,7 +5,7 @@ import logging
 from typing import Any, Callable, Dict, List, Optional
 
 import async_timeout
-from custom_components.rohlik.rohlik_api import RohlikApi
+from custom_components.rohlikcz.rohlik_api import RohlikApi
 
 
 #from aiohttp import ClientError
