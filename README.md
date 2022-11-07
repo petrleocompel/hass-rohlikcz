@@ -14,6 +14,6 @@ Currently only usage of username and password is working. See issue #1
 - sensor of upcoming order
 
 ## TBD
-- [ ] single data coordinator for updates
-- [ ] helper for "date time of upcoming order"
+- [x] single data coordinator for updates
+- [x] helper for "date time of upcoming order"
 - [ ] ? real deliver time (currently no API available)

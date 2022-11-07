@@ -11,7 +11,6 @@ from typing import Any, Optional
 import voluptuous as vol
 
 
-
 CONFIG_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_USERNAME): cv.string,
@@ -29,7 +28,7 @@ class RohlikCustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         if user_input is not None:
             try:
-                RohlikApi(aiohttp.ClientSession() , user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
+                RohlikApi(aiohttp.ClientSession(), user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
             except ValueError:
                 errors["base"] = "auth"
             if not errors:
