@@ -24,7 +24,6 @@ from homeassistant.helpers.aiohttp_client import HassClientResponse
 
 
 _LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
