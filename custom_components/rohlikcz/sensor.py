@@ -62,6 +62,8 @@ ATTR_UPCOMING_ORDER = "upcoming_order"
 
 
 class UpcomingOrderPresenceSensor(CoordinatorEntity, BinarySensorEntity):
+    _attr_has_entity_name = True
+
     """Representation of Hikvision external magnet detector."""
     coordinator: RohlikDataUpdateCoordinator
 
@@ -71,11 +73,7 @@ class UpcomingOrderPresenceSensor(CoordinatorEntity, BinarySensorEntity):
         self._attr_unique_id = f"rohlik-upcoming-order-presence"
         self._attr_icon = "mdi:basket"
         self._device_class = BinarySensorDeviceClass.PRESENCE
-        self._attr_has_entity_name = True
-
-    @property
-    def name(self) -> str | None:
-        return "Rohlík upcoming order presence"
+        self.friendly_name = "Rohlík upcoming order presence"
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -91,6 +89,8 @@ class UpcomingOrderPresenceSensor(CoordinatorEntity, BinarySensorEntity):
 
 
 class UpcomingOrderDateSensor(CoordinatorEntity, SensorEntity):
+    _attr_has_entity_name = True
+    
     """Representation of Hikvision external magnet detector."""
     coordinator: RohlikDataUpdateCoordinator
 
@@ -100,17 +100,17 @@ class UpcomingOrderDateSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = f"rohlik-upcoming-order-date"
         self._attr_icon = "mdi:clock"
         self._device_class = SensorDeviceClass.TIMESTAMP
-        self._attr_has_entity_name = True
-
-    @property
-    def name(self) -> str | None:
-        return "Rohlík upcoming order presence"
+        self.friendly_name = "Rohlík upcoming order date"
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self.async_write_ha_state()
-        if self.coordinator.upcoming_orders is not None and len(self.coordinator.upcoming_orders) > 0 and self.coordinator.upcoming_orders[0].delivery_slot is not None and self.coordinator.upcoming_orders[0].delivery_slot.since is not None:
-            self._attr_native_value = datetime.fromisoformat(self.coordinator.upcoming_orders[0].delivery_slot.since.split("+")[0])
+        if self.coordinator.upcoming_orders is not None and len(self.coordinator.upcoming_orders) > 0 \
+                and self.coordinator.upcoming_orders[0].delivery_slot is not None \
+                and self.coordinator.upcoming_orders[0].delivery_slot.since is not None:
+            self._attr_native_value = datetime.fromisoformat(
+                self.coordinator.upcoming_orders[0].delivery_slot.since.split("+")[0]
+            )
         else:
             self._attr_native_value = None

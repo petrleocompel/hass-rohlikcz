@@ -14,11 +14,11 @@ class RohlikApi:
         self._session = session
 
     async def login(self):
-        async with async_timeout.timeout(10):
-            response = await self._session.post("https://www.rohlik.cz/services/frontend-service/login",
-                                                json={"email": self._user,"password": self._pass, "name": ""})
-            if response.status != 200:
-                raise ValueError("Login failed")
+        res = await self._session.post("https://www.rohlik.cz/services/frontend-service/login",
+                                 json={"email": self._user, "password": self._pass, "name": ""})
+        if res.status != 200:
+            raise ValueError("Login failed")
+        return res
 
-    def upcomming_orders(self) -> HassClientResponse:
-        return cast(HassClientResponse, self._session.get("https://www.rohlik.cz/api/v3/orders/upcoming"))
+    async def upcomming_orders(self) -> HassClientResponse:
+        return cast(HassClientResponse, await self._session.get("https://www.rohlik.cz/api/v3/orders/upcoming"))

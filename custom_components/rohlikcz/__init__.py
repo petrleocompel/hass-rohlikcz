@@ -20,8 +20,11 @@ from .const import DOMAIN, DATA_COORDINATOR
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .rohlik_api import RohlikApi
 from .model import UpcomingOrder, upcoming_order_from_dict
+from homeassistant.helpers.aiohttp_client import HassClientResponse
+
 
 _LOGGER = logging.getLogger(__name__)
+_LOGGER.setLevel(logging.DEBUG)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
@@ -37,7 +40,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     api = RohlikApi(session, username, password)
     try:
         async with timeout(10):
-            await hass.async_add_executor_job(api.login)
+            await api.login()
     except (asyncio.TimeoutError, ConnectionError) as ex:
         raise ConfigEntryNotReady from ex
 
@@ -58,10 +61,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 class RohlikDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching ax pro data."""
+    """Class to manage fetching Rohlik data."""
     api: RohlikApi
-
-    device_name: Optional[str] = None
 
     upcoming_orders: Optional[List[UpcomingOrder]] = None
 
@@ -73,15 +74,17 @@ class RohlikDataUpdateCoordinator(DataUpdateCoordinator):
         self.api = api
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=timedelta(minutes=10))
 
-    def _update_data(self) -> None:
-        """Fetch data from rohlik via sync functions."""
-        self.upcoming_orders = upcoming_order_from_dict(self.api.upcomming_orders().json())
+    async def _update_data(self) -> None:
+        """Fetch data from Rohlik via sync functions."""
+        response: HassClientResponse = await self.api.upcomming_orders()
+
+        self.upcoming_orders = upcoming_order_from_dict(json.loads(await response.text()))
         _LOGGER.debug("Rohlik upcoming orders: %s", self.upcoming_orders)
 
     async def _async_update_data(self) -> None:
-        """Fetch data from Axpro."""
+        """Fetch data from Rohlik."""
         try:
             async with timeout(10):
-                await self.hass.async_add_executor_job(self._update_data)
+                await self._update_data()
         except ConnectionError as error:
             raise UpdateFailed(error) from error
